@@ -1,0 +1,81 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model pessoa {
+  id                   String                 @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  nome                 String?                @db.VarChar
+  contato              String?                @db.VarChar
+  endereco             String?                @db.VarChar
+  movimento_financeiro movimento_financeiro[]
+  pedido               pedido[]
+}
+
+model logistica {
+  id                   String                @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id_movimento         String?               @db.Uuid
+  data_operacao        DateTime              @db.Date
+  tipo                 String?               @db.VarChar(1)
+  descricao            String?
+  movimento_financeiro movimento_financeiro? @relation(fields: [id_movimento], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  pedido               pedido[]
+}
+
+model movimento_financeiro {
+  id                              String                            @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  data_inclusao                   DateTime                          @db.Date
+  data_vencimento                 DateTime                          @db.Date
+  data_pagamento                  DateTime?                         @db.Date
+  valor                           Decimal                           @db.Decimal
+  id_pessoa                       String?                           @db.Uuid
+  descricao                       String?
+  logistica                       logistica[]
+  pessoa                          pessoa?                           @relation(fields: [id_pessoa], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  movimento_financeiro_pagamentos movimento_financeiro_pagamentos[]
+  pedido                          pedido[]
+}
+
+model movimento_financeiro_pagamentos {
+  id                   String                @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id_movimento         String?               @db.Uuid
+  valor                Decimal               @db.Decimal
+  data_operacao        DateTime?             @db.Date
+  movimento_financeiro movimento_financeiro? @relation(fields: [id_movimento], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model produto {
+  id        String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  nome      String?  @db.VarChar
+  descricao String?
+  preco     Decimal? @db.Decimal
+  categoria String?  @db.VarChar
+  pedido    pedido[]
+}
+
+model pedido {
+  id                   String                @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  data_pedido          DateTime?             @db.Date
+  status               String?               @db.VarChar
+  id_produto           String?               @db.Uuid
+  id_pessoa            String?               @db.Uuid
+  id_movimento         String?               @db.Uuid
+  id_logistica         String?               @db.Uuid
+  logistica            logistica?            @relation(fields: [id_logistica], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  movimento_financeiro movimento_financeiro? @relation(fields: [id_movimento], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  pessoa               pessoa?               @relation(fields: [id_pessoa], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  produto              produto?              @relation(fields: [id_produto], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+
+
+
+model usuario {
+  id    String  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  login String? @db.VarChar(200)
+  senha String? @db.VarChar
+}
