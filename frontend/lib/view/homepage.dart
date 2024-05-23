@@ -59,7 +59,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                 ),
               ),
               ListTile(
-                title: const Text('Cadastro de Pessoas'),
+                title: const Text('Pessoas'),
                 onTap: () {
                   Navigator.pushNamed(context, '/pessoa');
                 },

@@ -1,6 +1,7 @@
 import 'package:eagro_gestor/view/homepage.dart';
 import 'package:eagro_gestor/view/login.dart';
-import 'package:eagro_gestor/view/pessoa.dart'; // Importe a nova página de pessoas
+import 'package:eagro_gestor/view/pessoa/cadpessoa.dart'; // Importe a nova página de pessoas
+import 'package:eagro_gestor/view/pessoa/pessoa.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -35,8 +36,11 @@ class EAgro extends StatelessWidget {
       routes: {
         '/login': (context) => const LoginPageWidget(),
         '/home': (context) => const HomePageWidget(),
-        '/pessoa': (context) =>
-            const PessoasPageWidget(), // Adicione a rota para a página de pessoas
+        '/pessoa': (context) => const PessoaWidget(),
+        '/cadpessoa': (context) {
+          final id = ModalRoute.of(context)?.settings.arguments as String?;
+          return CadastroPessoasPageWidget(id: id);
+        }, // Adicione a rota para a página de pessoas
       },
     );
   }

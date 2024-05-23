@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 
 import 'package:eagro_gestor/utils/http_client.dart';
@@ -174,7 +176,6 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                   } else {
                                     if (resposta.statusCode == 200) {
                                       erro = "";
-                                      // ignore: use_build_context_synchronously
                                       Navigator.pushNamed(context, '/home');
                                     } else {
                                       erro = "Usuário ou senha incorretos.";
@@ -186,7 +187,6 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                   backgroundColor:
                                       const Color.fromARGB(255, 88, 211, 40),
                                   shape: RoundedRectangleBorder(
-                                    // Define a forma do botão como retangular
                                     borderRadius: BorderRadius.circular(0),
                                   ),
                                 ),

@@ -1,11 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:eagro_gestor/utils/database.dart';
 
-const String baseUrl = ConfigBanco.baseUrl;
+const String baseUrl = "http://10.0.2.2:3000";
 const chaveApi = "";
-const Duration timeoutDuration = ConfigBanco.timeoutDuration;
+const Duration timeoutDuration = Duration(seconds: 10);
 
 Future<http.Response?> get(String endpoint) async {
   final Uri url = Uri.parse(baseUrl + endpoint);
