@@ -1,4 +1,3 @@
-import { Decimal } from '@prisma/client/runtime/library';
 import { Column, Double, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
