@@ -65,9 +65,9 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                 },
               ),
               ListTile(
-                title: const Text('Cadastro de Produtos'),
+                title: const Text('Produtos'),
                 onTap: () {
-                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/produto');
                 },
               ),
               ExpansionTile(

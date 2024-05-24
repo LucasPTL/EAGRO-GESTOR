@@ -43,6 +43,8 @@ dependencies:
   shrink_sidemenu: ^2.0.0+2-null-safety
   google_fonts: 4.0.3
   confirm_dialog: ^1.0.3
+  intl: ^0.18.1
+  flutter_masked_text2: ^0.9.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -16,7 +16,7 @@ class _PessoaWidgetState extends State<PessoaWidget> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   bool drawerOpen = false;
   List<Map<String, dynamic>> pessoas =
-      []; // Lista para armazenar os dados dos usuários
+      []; 
 
   @override
   void initState() {
@@ -52,7 +52,7 @@ class _PessoaWidgetState extends State<PessoaWidget> {
       }
     }
 
-    fetchPessoas(); // Chama a função para buscar os dados
+    fetchPessoas(); 
 
     double larguraTelaPorc(double porc) {
       double larguraTela = MediaQuery.of(context).size.width;
@@ -89,7 +89,7 @@ class _PessoaWidgetState extends State<PessoaWidget> {
                           backgroundColor:
                               const Color.fromARGB(255, 88, 211, 40),
                           shape: RoundedRectangleBorder(
-                            // Define a forma do botão como retangular
+                           
                             borderRadius: BorderRadius.circular(0),
                           ),
                         ),
@@ -112,19 +112,19 @@ class _PessoaWidgetState extends State<PessoaWidget> {
                       final pessoa = pessoas[index];
                       return Container(
                         margin: const EdgeInsets.symmetric(
-                            vertical: 4), // Separação entre as linhas
+                            vertical: 4),
                         decoration: BoxDecoration(
                           color: (index % 2 == 0)
                               ? Colors.white
-                              : Colors.grey[200], // Alternância de cores
+                              : Colors.grey[200],
                           borderRadius:
-                              BorderRadius.circular(8), // Bordas arredondadas
+                              BorderRadius.circular(8), 
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withOpacity(0.1),
                               spreadRadius: 1,
                               blurRadius: 2,
-                              offset: const Offset(0, 1), // Posição da sombra
+                              offset: const Offset(0, 1),
                             ),
                           ],
                         ),

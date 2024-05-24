@@ -1,26 +1,27 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:convert';
-
 import 'package:eagro_gestor/utils/http_client.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 import 'package:phone_form_field/phone_form_field.dart';
 
-class CadastroPessoasPageWidget extends StatefulWidget {
-  const CadastroPessoasPageWidget({super.key, String? id});
+class CadastroprodutosPageWidget extends StatefulWidget {
+  const CadastroprodutosPageWidget({super.key, String? id});
 
   @override
-  State<CadastroPessoasPageWidget> createState() =>
-      _CadastroPessoasPageWidgetState();
+  State<CadastroprodutosPageWidget> createState() =>
+      _CadastroprodutosPageWidgetState();
 }
 
-class _CadastroPessoasPageWidgetState extends State<CadastroPessoasPageWidget> {
+class _CadastroprodutosPageWidgetState
+    extends State<CadastroprodutosPageWidget> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController controllerNome = TextEditingController();
-  final TextEditingController controllerContato = TextEditingController();
-  final TextEditingController controllerDDD = TextEditingController();
-  final TextEditingController controllerEndereco = TextEditingController();
+  final TextEditingController controllerDescricao = TextEditingController();
+  final controllerPreco =
+      MoneyMaskedTextController(decimalSeparator: ',', thousandSeparator: '.');
+  final TextEditingController controllerCategoria = TextEditingController();
   @override
   void dispose() {
     super.dispose();
@@ -40,31 +41,30 @@ class _CadastroPessoasPageWidgetState extends State<CadastroPessoasPageWidget> {
       return (alturaTela * (porc / 100));
     }
 
-    final String? idPessoa =
+    final String? idProduto =
         ModalRoute.of(context)?.settings.arguments as String?;
 
-    void populaCampos(String? idPessoa) async {
-      if (idPessoa != null && idPessoa.isNotEmpty) {
-        var resposta = await get('/pessoa/$idPessoa');
-        var pessoa = jsonDecode(resposta!.body);
-        if (resposta.statusCode == 200) {
+    void populaCampos(String? idProduto) async {
+      if (idProduto != null && idProduto.isNotEmpty) {
+        var resposta = await get('/produto/$idProduto');
+        if (resposta?.statusCode == 200) {
           try {
-            controllerNome.text = pessoa['nome'];
-            controllerEndereco.text = pessoa['endereco'];
-            String contato = pessoa['contato'];
-            controllerDDD.text = contato.substring(0, 2);
-            controllerContato.text = contato.substring(2, contato.length);
+            var produto = jsonDecode(resposta!.body.toString());
+            controllerNome.text = produto['nome'];
+            controllerDescricao.text = produto['descricao'];
+            controllerCategoria.text = produto['categoria'];
+            controllerPreco.text = (produto['preco']).toString();
           } catch (e) {
-            debugPrint("Erro ao buscar pessoa: $e");
+            debugPrint("Erro ao buscar produto: $e");
           }
         } else {
           debugPrint(
-              "Erro ao buscar pessoa: status code ${resposta.statusCode}");
+              "Erro ao buscar produto: status code ${resposta?.statusCode}");
         }
       }
     }
 
-    populaCampos(idPessoa);
+    populaCampos(idProduto);
 
     return Scaffold(
         backgroundColor: const Color.fromARGB(164, 34, 57, 88),
@@ -90,8 +90,8 @@ class _CadastroPessoasPageWidgetState extends State<CadastroPessoasPageWidget> {
                         controller: controllerNome,
                         decoration: const InputDecoration(
                           counterText: '',
-                          hintText: 'Insira o nome',
-                          labelText: 'Pessoa',
+                          hintText: 'Insira o nome do produto',
+                          labelText: 'Produto',
                           floatingLabelBehavior: FloatingLabelBehavior.always,
                           labelStyle: TextStyle(
                               color: Color.fromARGB(255, 88, 211, 40)),
@@ -110,11 +110,11 @@ class _CadastroPessoasPageWidgetState extends State<CadastroPessoasPageWidget> {
                       SizedBox(height: alturaTelaPorc(2)),
                       TextField(
                         maxLength: 150,
-                        controller: controllerEndereco,
+                        controller: controllerDescricao,
                         decoration: const InputDecoration(
                           counterText: '',
-                          hintText: 'Insira o endereço',
-                          labelText: 'Endereço',
+                          hintText: 'Insira a descrição',
+                          labelText: 'Descrição',
                           floatingLabelBehavior: FloatingLabelBehavior.always,
                           labelStyle: TextStyle(
                               color: Color.fromARGB(255, 88, 211, 40)),
@@ -131,79 +131,49 @@ class _CadastroPessoasPageWidgetState extends State<CadastroPessoasPageWidget> {
                         style: const TextStyle(color: Colors.white),
                       ),
                       SizedBox(height: alturaTelaPorc(2)),
-                      SizedBox(
-                        width: larguraTelaPorc(60),
-                        child: Row(
-                          children: [
-                            SizedBox(
-                              width: larguraTelaPorc(7),
-                              child: TextField(
-                                textAlign: TextAlign.center,
-                                textAlignVertical: TextAlignVertical.center,
-                                maxLength: 2,
-                                maxLengthEnforcement: MaxLengthEnforcement
-                                    .truncateAfterCompositionEnds,
-                                controller: controllerDDD,
-                                keyboardType: TextInputType.number,
-                                decoration: const InputDecoration(
-                                  counterText: '',
-                                  labelText: 'DDD',
-                                  floatingLabelBehavior:
-                                      FloatingLabelBehavior.always,
-                                  labelStyle: TextStyle(
-                                      color: Color.fromARGB(255, 88, 211, 40)),
-                                  hintStyle: TextStyle(color: Colors.white),
-                                  enabledBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color:
-                                            Color.fromARGB(255, 88, 211, 40)),
-                                  ),
-                                  focusedBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color:
-                                            Color.fromARGB(255, 88, 211, 40)),
-                                  ),
-                                ),
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              width: larguraTelaPorc(3),
-                            ),
-                            SizedBox(
-                              width: larguraTelaPorc(50),
-                              child: TextField(
-                                maxLength: 9,
-                                controller: controllerContato,
-                                keyboardType: TextInputType.number,
-                                decoration: const InputDecoration(
-                                  counterText: '',
-                                  alignLabelWithHint: true,
-                                  hintText: 'Insira o contato',
-                                  labelText: 'Contato',
-                                  floatingLabelBehavior:
-                                      FloatingLabelBehavior.always,
-                                  labelStyle: TextStyle(
-                                      color: Color.fromARGB(255, 88, 211, 40)),
-                                  hintStyle: TextStyle(color: Colors.white),
-                                  enabledBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color:
-                                            Color.fromARGB(255, 88, 211, 40)),
-                                  ),
-                                  focusedBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color:
-                                            Color.fromARGB(255, 88, 211, 40)),
-                                  ),
-                                ),
-                                style: const TextStyle(color: Colors.white),
-                              ),
-                            ),
-                          ],
+                      TextField(
+                        maxLength: 150,
+                        controller: controllerCategoria,
+                        decoration: const InputDecoration(
+                          counterText: '',
+                          hintText: 'Insira a categoria',
+                          labelText: 'Categoria',
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                          labelStyle: TextStyle(
+                              color: Color.fromARGB(255, 88, 211, 40)),
+                          hintStyle: TextStyle(color: Colors.white),
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Color.fromARGB(255, 88, 211, 40)),
+                          ),
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Color.fromARGB(255, 88, 211, 40)),
+                          ),
                         ),
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      SizedBox(height: alturaTelaPorc(2)),
+                      TextField(
+                        controller: controllerPreco,
+                        decoration: const InputDecoration(
+                          counterText: '',
+                          hintText: 'Insira o valor da moeda',
+                          labelText: 'Valor da Moeda',
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                          labelStyle: TextStyle(
+                              color: Color.fromARGB(255, 88, 211, 40)),
+                          hintStyle: TextStyle(color: Colors.white),
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Color.fromARGB(255, 88, 211, 40)),
+                          ),
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Color.fromARGB(255, 88, 211, 40)),
+                          ),
+                        ),
+                        style: const TextStyle(color: Colors.white),
                       ),
                       SizedBox(
                         height: alturaTelaPorc(4),
@@ -212,29 +182,33 @@ class _CadastroPessoasPageWidgetState extends State<CadastroPessoasPageWidget> {
                         width: larguraTelaPorc(40),
                         child: TextButton(
                           onPressed: () async {
-                            var erro = '';
+                            String erro = '';
                             if (controllerNome.text.length < 3) {
                               erro = '${erro}Nome Inválido. ';
                             }
-                            if (controllerEndereco.text.length < 3) {
-                              erro = '${erro}Endereço Inválido. ';
+                            if (controllerDescricao.text.length < 3) {
+                              erro = '${erro}Descrição Inválida. ';
                             }
-                            if (controllerDDD.text.length != 2) {
-                              erro = '${erro}DDD Inválido. ';
-                            }
-                            if (controllerContato.text.length < 8) {
-                              erro = '${erro}Contato Inválido. ';
+                            if (controllerCategoria.text.length < 3) {
+                              erro = '${erro}Categoria Inválida. ';
                             }
                             if (erro == '') {
                               final Map<String, dynamic> body = {
                                 'nome': controllerNome.text,
-                                'endereco': controllerEndereco.text,
-                                'contato':
-                                    controllerDDD.text + controllerContato.text
+                                'descricao': controllerDescricao.text,
+                                'preco': (controllerPreco.numberValue * 100)
+                                    .roundToDouble()
+                                    .toString()
+                                    .substring(
+                                        0,
+                                        controllerPreco.numberValue
+                                            .toString()
+                                            .length),
+                                'categoria': controllerCategoria.text
                               };
-                              if (idPessoa != null && idPessoa.isNotEmpty) {
+                              if (idProduto != null && idProduto.isNotEmpty) {
                                 final resposta =
-                                    await put('/pessoa/$idPessoa', body);
+                                    await put('/produto/$idProduto', body);
                                 if (resposta == null) {
                                   ScaffoldMessenger.of(context)
                                       .showSnackBar(const SnackBar(
@@ -246,18 +220,18 @@ class _CadastroPessoasPageWidgetState extends State<CadastroPessoasPageWidget> {
                                     ScaffoldMessenger.of(context)
                                         .showSnackBar(const SnackBar(
                                       content:
-                                          Text('Pessoa alterada com sucesso'),
+                                          Text('Produto alterado com sucesso'),
                                     ));
-                                    Navigator.pushNamed(context, '/pessoa');
+                                    Navigator.pushNamed(context, '/produto');
                                   } else {
                                     ScaffoldMessenger.of(context)
                                         .showSnackBar(const SnackBar(
-                                      content: Text('Erro ao alterar pessoa'),
+                                      content: Text('Erro ao alterar produto'),
                                     ));
                                   }
                                 }
                               } else {
-                                final resposta = await post('/pessoa', body);
+                                final resposta = await post('/produto', body);
                                 if (resposta == null) {
                                   ScaffoldMessenger.of(context)
                                       .showSnackBar(const SnackBar(
@@ -269,19 +243,24 @@ class _CadastroPessoasPageWidgetState extends State<CadastroPessoasPageWidget> {
                                     ScaffoldMessenger.of(context)
                                         .showSnackBar(const SnackBar(
                                       content:
-                                          Text('Pessoa gravada com sucesso'),
+                                          Text('Produto gravado com sucesso'),
                                     ));
-                                    Navigator.pushNamed(context, '/pessoa');
+                                    Navigator.pushNamed(context, '/produto');
                                   } else {
                                     ScaffoldMessenger.of(context)
                                         .showSnackBar(const SnackBar(
-                                      content: Text('Erro ao gravar pessoa'),
+                                      content: Text('Erro ao gravar produto'),
                                     ));
                                   }
                                 }
                               }
 
                               setState(() {});
+                            } else {
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(SnackBar(
+                                content: Text(erro),
+                              ));
                             }
                           },
                           style: TextButton.styleFrom(
@@ -292,7 +271,7 @@ class _CadastroPessoasPageWidgetState extends State<CadastroPessoasPageWidget> {
                             ),
                           ),
                           child: const Text(
-                            'Cadastrar',
+                            'Salvar',
                             style:
                                 TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
                           ),
