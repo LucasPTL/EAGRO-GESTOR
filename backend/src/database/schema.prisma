@@ -52,7 +52,7 @@ model produto {
   id        String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   nome      String?  @db.VarChar
   descricao String?
-  preco     Decimal? @db.Decimal
+  preco     Int?
   categoria String?  @db.VarChar
   pedido    pedido[]
 }
@@ -70,9 +70,6 @@ model pedido {
   pessoa               pessoa?               @relation(fields: [id_pessoa], references: [id], onDelete: NoAction, onUpdate: NoAction)
   produto              produto?              @relation(fields: [id_produto], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
-
-
-
 
 model usuario {
   id    String  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
